@@ -1,0 +1,449 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLASH ARENA ESP - Free Fire Tournament</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700;900&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto Condensed', sans-serif;
+            background: #0A0A0A;
+            color: #CFCFCF;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: radial-gradient(circle, #FF7A00, #FF2D2D);
+            border-radius: 50%;
+            opacity: 0;
+            animation: float 8s infinite ease-in-out;
+            box-shadow: 0 0 8px #FF2D2D;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(50px) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .background-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 50% 30%, rgba(255, 45, 45, 0.15), transparent 60%),
+                        radial-gradient(ellipse at 80% 70%, rgba(255, 122, 0, 0.1), transparent 50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        #poster-container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        #logo {
+            max-width: 180px;
+            height: auto;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 25px rgba(255, 45, 45, 0.8)) drop-shadow(0 10px 20px rgba(0, 0, 0, 0.6));
+            transition: transform 0.3s ease;
+        }
+
+        #logo:hover {
+            transform: scale(1.05);
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #FF2D2D 0%, #FF7A00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(255, 45, 45, 0.6);
+            filter: drop-shadow(0 0 20px rgba(255, 45, 45, 0.8));
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(255, 45, 45, 0.8));
+            }
+            50% {
+                filter: drop-shadow(0 0 35px rgba(255, 45, 45, 1));
+            }
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.98), rgba(30, 15, 15, 0.95));
+            border: 2px solid rgba(255, 45, 45, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(255, 45, 45, 0.4),
+                        0 10px 40px rgba(0, 0, 0, 0.8),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 45, 45, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 0 50px rgba(255, 45, 45, 0.7),
+                        0 15px 50px rgba(0, 0, 0, 0.9);
+            border-color: rgba(255, 45, 45, 0.6);
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 3px;
+            color: #FF2D2D;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(255, 45, 45, 0.8);
+            border-bottom: 2px solid rgba(255, 122, 0, 0.5);
+            padding-bottom: 10px;
+        }
+
+        .card p, .card ul {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #CFCFCF;
+        }
+
+        .card ul {
+            list-style: none;
+        }
+
+        .card li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .card li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #FF7A00;
+            font-weight: bold;
+        }
+
+        .point-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .point-item span:first-child {
+            color: #CFCFCF;
+        }
+
+        .point-item span:last-child {
+            color: #FF2D2D;
+            text-shadow: 0 0 10px rgba(255, 45, 45, 0.8);
+            font-size: 1.1rem;
+        }
+
+        .full-width-card {
+            grid-column: 1 / -1;
+        }
+
+        .priority-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .priority-item {
+            background: rgba(255, 45, 45, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #FF7A00;
+            font-weight: 700;
+        }
+
+        .priority-item strong {
+            color: #FF2D2D;
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: rgba(207, 207, 207, 0.5);
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        #download-btn {
+            display: block;
+            margin: 40px auto;
+            padding: 15px 40px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: #0A0A0A;
+            background: linear-gradient(135deg, #FF2D2D, #FF7A00);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(255, 45, 45, 0.6),
+                        0 5px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        #download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(255, 45, 45, 0.9),
+                        0 8px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        #download-btn:active {
+            transform: scale(0.98);
+        }
+
+        @media (max-width: 768px) {
+            #poster-container {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                letter-spacing: 4px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .card h2 {
+                font-size: 1.6rem;
+            }
+
+            .priority-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles"></div>
+    <div class="background-glow"></div>
+
+    <div id="poster-container">
+        <header>
+            <img id="logo" src="https://pin.it/Zzmik2Pfp" alt="Logo" onerror="this.style.display='none'">
+            <h1>CLASH ARENA ESP</h1>
+        </header>
+
+        <div class="cards-container">
+            <div class="card">
+                <h2>POINT SYSTEM</h2>
+                <div class="point-item">
+                    <span>#1</span>
+                    <span>12</span>
+                </div>
+                <div class="point-item">
+                    <span>#2</span>
+                    <span>09</span>
+                </div>
+                <div class="point-item">
+                    <span>#3</span>
+                    <span>08</span>
+                </div>
+                <div class="point-item">
+                    <span>#4</span>
+                    <span>07</span>
+                </div>
+                <div class="point-item">
+                    <span>#5</span>
+                    <span>06</span>
+                </div>
+                <div class="point-item">
+                    <span>#6</span>
+                    <span>05</span>
+                </div>
+                <div class="point-item">
+                    <span>#7</span>
+                    <span>04</span>
+                </div>
+                <div class="point-item">
+                    <span>#8</span>
+                    <span>03</span>
+                </div>
+                <div class="point-item">
+                    <span>#9</span>
+                    <span>02</span>
+                </div>
+                <div class="point-item">
+                    <span>#10</span>
+                    <span>01</span>
+                </div>
+                <div class="point-item">
+                    <span>#11 & #12</span>
+                    <span>0</span>
+                </div>
+                <div class="point-item" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 122, 0, 0.3);">
+                    <span>1 KILL</span>
+                    <span>1 POINT</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>RULES</h2>
+                <ul>
+                    <li>Map must be downloaded as mentioned above</li>
+                    <li>Take squad entry in your slot number</li>
+                    <li>Do not chat in custom room</li>
+                    <li>Do not abuse in custom room or with any admin</li>
+                </ul>
+            </div>
+
+            <div class="card full-width-card">
+                <h2>POINTS PRIORITY</h2>
+                <div class="priority-list">
+                    <div class="priority-item">
+                        <strong>1st</strong>
+                        BOOYAH
+                    </div>
+                    <div class="priority-item">
+                        <strong>2nd</strong>
+                        KILLS
+                    </div>
+                    <div class="priority-item">
+                        <strong>3rd</strong>
+                        PLACEMENT
+                    </div>
+                </div>
+                <p style="margin-top: 20px; text-align: center; color: #FF7A00; font-weight: 700;">According to Garena</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 Clash Arena ESP | Powered by Free Fire India
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 30;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            particle.style.animationDuration = (6 + Math.random() * 4) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        document.getElementById('download-btn').addEventListener('click', function() {
+            const button = this;
+            const originalText = button.textContent;
+            button.textContent = 'CAPTURING...';
+            button.disabled = true;
+
+            const posterContainer = document.getElementById('poster-container');
+            
+            html2canvas(posterContainer, {
+                backgroundColor: '#0A0A0A',
+                scale: 2,
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'clash-arena-esp-poster.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                button.textContent = originalText;
+                button.disabled = false;
+            }).catch(err => {
+                console.error('Error capturing poster:', err);
+                button.textContent = originalText;
+                button.disabled = false;
+                alert('Error capturing poster. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>
