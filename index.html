@@ -1,449 +1,1632 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLASH ARENA ESP - Free Fire Tournament</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700;900&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Clash Arena ESP Manager — Final</title>
 
-        body {
-            font-family: 'Roboto Condensed', sans-serif;
-            background: #0A0A0A;
-            color: #CFCFCF;
-            overflow-x: hidden;
-            position: relative;
-            min-height: 100vh;
-        }
+  <!-- Google Fonts (allowed) -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;600&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
 
-        #particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
+  <!-- html2canvas CDN (required) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 
-        .particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: radial-gradient(circle, #FF7A00, #FF2D2D);
-            border-radius: 50%;
-            opacity: 0;
-            animation: float 8s infinite ease-in-out;
-            box-shadow: 0 0 8px #FF2D2D;
-        }
+  <style>
+    /* ============================
+       Clash Arena ESP Manager CSS
+       Single-file, production-ready styling
+       ============================ */
 
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) translateX(0) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100px) translateX(50px) scale(1.5);
-                opacity: 0;
-            }
-        }
+    :root{
+      --bg: #0f0f0f;
+      --card-bg: rgba(255,255,255,0.02);
+      --accent-red: #ff2d2d;
+      --accent-orange: #ffb347;
+      --muted: #bfc3c8;
+      --glass: rgba(255,255,255,0.03);
+      --gold: #ffd166;
+      --silver: #c7d2da;
+      --bronze: #d88a3a;
+      --min-font: 14px;
+      --max-width: 1100px;
+    }
 
-        .background-glow {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse at 50% 30%, rgba(255, 45, 45, 0.15), transparent 60%),
-                        radial-gradient(ellipse at 80% 70%, rgba(255, 122, 0, 0.1), transparent 50%);
-            z-index: 0;
-            pointer-events: none;
-        }
+    html,body{
+      height:100%;
+      background: linear-gradient(180deg, rgba(12,12,12,1) 0%, rgba(15,15,15,1) 100%);
+      color: #fff;
+      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      margin:0;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
 
-        #poster-container {
-            position: relative;
-            z-index: 2;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
+    /* Container */
+    .app {
+      max-width: var(--max-width);
+      margin: 18px auto;
+      padding: 18px;
+      box-sizing: border-box;
+    }
 
-        header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
+    /* Header */
+    .topbar {
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:16px;
+    }
 
-        #logo {
-            max-width: 180px;
-            height: auto;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 25px rgba(255, 45, 45, 0.8)) drop-shadow(0 10px 20px rgba(0, 0, 0, 0.6));
-            transition: transform 0.3s ease;
-        }
+    .brand {
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
 
-        #logo:hover {
-            transform: scale(1.05);
-        }
+    .logo {
+      width:64px;
+      height:64px;
+      border-radius:8px;
+      background: linear-gradient(120deg, rgba(255,45,45,0.12), rgba(255,179,71,0.06));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 6px 18px rgba(255,45,45,0.06), inset 0 -6px 18px rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
 
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(3rem, 8vw, 6rem);
-            font-weight: 900;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            background: linear-gradient(180deg, #FF2D2D 0%, #FF7A00 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 40px rgba(255, 45, 45, 0.6);
-            filter: drop-shadow(0 0 20px rgba(255, 45, 45, 0.8));
-            animation: glow-pulse 3s ease-in-out infinite;
-        }
+    .logo h1{
+      font-family: "Bebas Neue";
+      font-size:20px;
+      letter-spacing:1px;
+      margin:0;
+      color:var(--accent-red);
+      text-shadow: 0 2px 8px rgba(255,45,45,0.12);
+    }
 
-        @keyframes glow-pulse {
-            0%, 100% {
-                filter: drop-shadow(0 0 20px rgba(255, 45, 45, 0.8));
-            }
-            50% {
-                filter: drop-shadow(0 0 35px rgba(255, 45, 45, 1));
-            }
-        }
+    .title {
+      line-height:1;
+    }
 
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 30px;
-        }
+    .title h2 {
+      margin:0;
+      font-family:"Bebas Neue";
+      font-size:22px;
+      color:var(--gold);
+      letter-spacing:1px;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.6);
+    }
 
-        .card {
-            background: linear-gradient(135deg, rgba(20, 20, 20, 0.98), rgba(30, 15, 15, 0.95));
-            border: 2px solid rgba(255, 45, 45, 0.3);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 0 30px rgba(255, 45, 45, 0.4),
-                        0 10px 40px rgba(0, 0, 0, 0.8),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
+    .title p {
+      margin:0;
+      font-size:13px;
+      color:var(--muted);
+    }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 45, 45, 0.1), transparent);
-            transition: left 0.5s ease;
-        }
+    /* Controls / Lobby management */
+    .controls {
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
 
-        .card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 0 50px rgba(255, 45, 45, 0.7),
-                        0 15px 50px rgba(0, 0, 0, 0.9);
-            border-color: rgba(255, 45, 45, 0.6);
-        }
+    .btn {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.04);
+      padding:8px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:14px;
+      color:#fff;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      transition: transform .12s ease, box-shadow .12s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-        .card:hover::before {
-            left: 100%;
-        }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,45,45,0.06); }
 
-        .card h2 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 2rem;
-            letter-spacing: 3px;
-            color: #FF2D2D;
-            margin-bottom: 20px;
-            text-shadow: 0 0 15px rgba(255, 45, 45, 0.8);
-            border-bottom: 2px solid rgba(255, 122, 0, 0.5);
-            padding-bottom: 10px;
-        }
+    .btn.ghost {
+      background: transparent;
+      border: 1px dashed rgba(255,255,255,0.04);
+    }
 
-        .card p, .card ul {
-            font-size: 1rem;
-            line-height: 1.8;
-            color: #CFCFCF;
-        }
+    .btn.danger {
+      background: linear-gradient(180deg, rgba(255,45,45,0.12), rgba(255,45,45,0.06));
+      border-color: rgba(255,45,45,0.16);
+      color:var(--accent-red);
+    }
 
-        .card ul {
-            list-style: none;
-        }
+    /* Layout: left (lobbies) + right (leaderboard & card) */
+    .layout {
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap:16px;
+    }
 
-        .card li {
-            margin-bottom: 8px;
-            padding-left: 20px;
-            position: relative;
-        }
+    @media (max-width:880px){
+      .layout { grid-template-columns: 1fr; }
+      .logo { width:54px; height:54px; }
+    }
 
-        .card li::before {
-            content: '▸';
-            position: absolute;
-            left: 0;
-            color: #FF7A00;
-            font-weight: bold;
-        }
+    /* Left panel */
+    .panel {
+      background: var(--card-bg);
+      border-radius:12px;
+      padding:12px;
+      border: 1px solid rgba(255,255,255,0.03);
+      min-height:320px;
+    }
 
-        .point-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
+    .lobby-list {
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
 
-        .point-item span:first-child {
-            color: #CFCFCF;
-        }
+    .lobby-item {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:8px;
+      border-radius:8px;
+      cursor:pointer;
+      transition: background .12s ease, transform .08s ease;
+    }
 
-        .point-item span:last-child {
-            color: #FF2D2D;
-            text-shadow: 0 0 10px rgba(255, 45, 45, 0.8);
-            font-size: 1.1rem;
-        }
+    .lobby-item:hover { background: rgba(255,255,255,0.02); transform: translateY(-2px); }
 
-        .full-width-card {
-            grid-column: 1 / -1;
-        }
+    .lobby-item.active {
+      background: linear-gradient(90deg, rgba(255,45,45,0.06), rgba(255,179,71,0.02));
+      border: 1px solid rgba(255,45,45,0.08);
+      box-shadow: 0 8px 24px rgba(255,45,45,0.04);
+    }
 
-        .priority-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
+    .lobby-title {
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
 
-        .priority-item {
-            background: rgba(255, 45, 45, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #FF7A00;
-            font-weight: 700;
-        }
+    .lobby-actions {
+      display:flex;
+      gap:6px;
+      align-items:center;
+    }
 
-        .priority-item strong {
-            color: #FF2D2D;
-            font-size: 1.2rem;
-            display: block;
-            margin-bottom: 5px;
-        }
+    .small {
+      font-size:12px;
+      padding:6px 8px;
+      border-radius:8px;
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.03);
+      color:var(--muted);
+    }
 
-        footer {
-            text-align: center;
-            padding: 30px 20px;
-            color: rgba(207, 207, 207, 0.5);
-            font-size: 0.9rem;
-            position: relative;
-            z-index: 2;
-        }
+    /* Right area - main board & card generator */
+    .main {
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
 
-        #download-btn {
-            display: block;
-            margin: 40px auto;
-            padding: 15px 40px;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.5rem;
-            letter-spacing: 2px;
-            color: #0A0A0A;
-            background: linear-gradient(135deg, #FF2D2D, #FF7A00);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 0 30px rgba(255, 45, 45, 0.6),
-                        0 5px 20px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            z-index: 2;
-        }
+    .board {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+      border-radius:12px;
+      padding:12px;
+      border: 1px solid rgba(255,255,255,0.03);
+      overflow:auto;
+    }
 
-        #download-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 50px rgba(255, 45, 45, 0.9),
-                        0 8px 30px rgba(0, 0, 0, 0.7);
-        }
+    .board-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+    }
 
-        #download-btn:active {
-            transform: scale(0.98);
-        }
+    .board-header .meta {
+      display:flex;
+      gap:8px;
+      align-items:center;
+      color:var(--muted);
+      font-size:13px;
+    }
 
-        @media (max-width: 768px) {
-            #poster-container {
-                padding: 20px 15px;
-            }
+    .match-controls {
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
 
-            h1 {
-                letter-spacing: 4px;
-            }
+    /* Table */
+    table.results {
+      width:100%;
+      border-collapse:collapse;
+      min-width:820px;
+    }
 
-            .card {
-                padding: 20px;
-            }
+    table.results thead th {
+      text-align:left;
+      font-family:"Rajdhani";
+      font-size:13px;
+      letter-spacing:0.6px;
+      padding:10px 8px;
+      color:var(--muted);
+      font-weight:600;
+    }
 
-            .card h2 {
-                font-size: 1.6rem;
-            }
+    table.results tbody tr {
+      border-top:1px solid rgba(255,255,255,0.02);
+      transition: background .08s ease;
+    }
 
-            .priority-list {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    table.results tbody tr:hover {
+      background: rgba(255,255,255,0.02);
+    }
+
+    table.results td {
+      padding:10px 8px;
+      vertical-align:middle;
+      font-size:14px;
+    }
+
+    .rank {
+      width:56px;
+      font-family:"Bebas Neue";
+      font-size:18px;
+      text-align:center;
+    }
+
+    .team-name {
+      display:flex;
+      gap:8px;
+      align-items:center;
+      min-width:180px;
+    }
+
+    .team-name input {
+      background:transparent;
+      border:none;
+      color:#fff;
+      font-family:"Rajdhani";
+      font-size:15px;
+      outline:none;
+      min-width:100px;
+    }
+
+    .badge {
+      padding:6px 8px;
+      border-radius:8px;
+      font-weight:700;
+      font-size:12px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .top-1 { background: linear-gradient(90deg, rgba(255,215,0,0.12), rgba(255,215,0,0.06)); color:var(--gold); box-shadow: 0 6px 14px rgba(255,197,66,0.05); }
+    .top-2 { background: linear-gradient(90deg, rgba(192,192,192,0.06), rgba(192,192,192,0.03)); color:var(--silver); }
+    .top-3 { background: linear-gradient(90deg, rgba(216,138,58,0.06), rgba(216,138,58,0.03)); color:var(--bronze); }
+
+    /* small interactive inputs for placement, kills, booyah */
+    .small-input {
+      width:64px;
+      padding:6px 8px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.03);
+      background: rgba(255,255,255,0.01);
+      color:#fff;
+      text-align:center;
+      font-weight:600;
+    }
+
+    .small-input[type=number]::-webkit-inner-spin-button,
+    .small-input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .booyah {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .points {
+      font-weight:700;
+      font-family:"Rajdhani";
+      text-align:right;
+      min-width:68px;
+    }
+
+    /* Card generator */
+    .card-panel {
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+
+    .card-preview {
+      flex: 1 1 480px;
+      min-width:280px;
+      border-radius:12px;
+      overflow:hidden;
+      position:relative;
+      background:linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.6));
+      border:1px solid rgba(255,255,255,0.03);
+      padding:12px;
+    }
+
+    .card-controls {
+      width:320px;
+      min-width:260px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    .card-top {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:8px;
+    }
+
+    .card-inner {
+      padding:12px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.4));
+      border-radius:10px;
+      min-height:260px;
+      position:relative;
+      overflow:auto;
+      color:#fff;
+    }
+
+    .card-header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:8px;
+    }
+
+    .card-title {
+      font-family:"Bebas Neue";
+      font-size:26px;
+      letter-spacing:1px;
+    }
+
+    .card-sub {
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    /* leaderboard inside card */
+    .card-leaderboard {
+      margin-top:8px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .card-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:8px;
+      border-radius:8px;
+      background:rgba(0,0,0,0.25);
+    }
+
+    .card-row .c-left {
+      display:flex;
+      gap:10px;
+      align-items:center;
+      min-width:0;
+    }
+
+    .card-rank {
+      width:36px;
+      font-family:"Bebas Neue";
+      font-size:18px;
+      text-align:center;
+    }
+
+    .card-team {
+      font-family:"Rajdhani";
+      font-size:15px;
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .card-points {
+      font-weight:700;
+      font-family:"Poppins";
+    }
+
+    /* Inputs */
+    input[type=text], input[type=url], input[type=color] {
+      padding:8px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.03);
+      background:rgba(255,255,255,0.01);
+      color:#fff;
+      outline:none;
+      width:100%;
+      box-sizing:border-box;
+      font-size:14px;
+    }
+
+    label.small-label { font-size:12px; color:var(--muted); display:block; margin-bottom:6px; }
+
+    /* footer */
+    .footer {
+      margin-top:12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .powered {
+      color:var(--accent-red);
+      font-weight:700;
+      text-shadow: 0 6px 14px rgba(255,45,45,0.06);
+    }
+
+    /* helpers */
+    .muted { color:var(--muted); font-size:13px; }
+    .flex { display:flex; gap:8px; align-items:center; }
+    .gap { gap:8px; }
+
+    /* responsive tweaks */
+    @media (max-width:520px){
+      .logo h1 { font-size:16px; }
+      .title h2 { font-size:18px; }
+      .card-title { font-size:20px; }
+      .rank { width:48px; font-size:16px; }
+      table.results { min-width:720px; }
+    }
+
+    /* Accessibility: focus styles */
+    input:focus, button:focus, .lobby-item:focus {
+      outline: 3px solid rgba(255,45,45,0.12);
+      outline-offset: 2px;
+    }
+  </style>
 </head>
 <body>
-    <div id="particles"></div>
-    <div class="background-glow"></div>
-
-    <div id="poster-container">
-        <header>
-            <img id="logo" src="https://pin.it/Zzmik2Pfp" alt="Logo" onerror="this.style.display='none'">
-            <h1>CLASH ARENA ESP</h1>
-        </header>
-
-        <div class="cards-container">
-            <div class="card">
-                <h2>POINT SYSTEM</h2>
-                <div class="point-item">
-                    <span>#1</span>
-                    <span>12</span>
-                </div>
-                <div class="point-item">
-                    <span>#2</span>
-                    <span>09</span>
-                </div>
-                <div class="point-item">
-                    <span>#3</span>
-                    <span>08</span>
-                </div>
-                <div class="point-item">
-                    <span>#4</span>
-                    <span>07</span>
-                </div>
-                <div class="point-item">
-                    <span>#5</span>
-                    <span>06</span>
-                </div>
-                <div class="point-item">
-                    <span>#6</span>
-                    <span>05</span>
-                </div>
-                <div class="point-item">
-                    <span>#7</span>
-                    <span>04</span>
-                </div>
-                <div class="point-item">
-                    <span>#8</span>
-                    <span>03</span>
-                </div>
-                <div class="point-item">
-                    <span>#9</span>
-                    <span>02</span>
-                </div>
-                <div class="point-item">
-                    <span>#10</span>
-                    <span>01</span>
-                </div>
-                <div class="point-item">
-                    <span>#11 & #12</span>
-                    <span>0</span>
-                </div>
-                <div class="point-item" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 122, 0, 0.3);">
-                    <span>1 KILL</span>
-                    <span>1 POINT</span>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>RULES</h2>
-                <ul>
-                    <li>Map must be downloaded as mentioned above</li>
-                    <li>Take squad entry in your slot number</li>
-                    <li>Do not chat in custom room</li>
-                    <li>Do not abuse in custom room or with any admin</li>
-                    <li>Your booked slot cannot be cancelled. </li>
-                </ul>
-            </div>
-
-            <div class="card full-width-card">
-                <h2>POINTS PRIORITY</h2>
-                <div class="priority-list">
-                    <div class="priority-item">
-                        <strong>1st</strong>
-                        BOOYAH
-                    </div>
-                    <div class="priority-item">
-                        <strong>2nd</strong>
-                        PLACEMENT
-                    </div>
-                    <div class="priority-item">
-                        <strong>3rd</strong>
-                       KILLS
-                    </div>
-                </div>
-                <p style="margin-top: 20px; text-align: center; color: #FF7A00; font-weight: 700;">According to Garena</p>
-            </div>
+  <div class="app" id="app">
+    <div class="topbar" role="banner">
+      <div class="brand" aria-hidden="false">
+        <div class="logo" aria-hidden="true"><h1>ESP</h1></div>
+        <div class="title">
+          <h2>Clash Arena — Manager</h2>
+          <p>Free Fire Scrim Points • Localhost & GitHub Pages ready</p>
         </div>
+      </div>
+
+      <div class="controls" role="navigation" aria-label="Lobby controls">
+        <div id="timeDisplay" class="muted" aria-live="polite"></div>
+        <button class="btn" id="createLobbyBtn" title="Create lobby">+ New Lobby</button>
+        <button class="btn ghost" id="resetBtn" title="Reset all (localStorage)">Reset</button>
+      </div>
     </div>
 
-    <footer>
-        © 2025 Clash Arena ESP | Powered by Free Fire India
-    </footer>
+    <div class="layout">
+      <!-- Left: Lobbies & Management -->
+      <aside class="panel" aria-labelledby="lobbiesLabel">
+        <h3 id="lobbiesLabel" style="margin:0 0 8px 0; font-family:'Bebas Neue'; font-size:18px; color:var(--accent-orange)">Lobbies</h3>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script>
-        const particlesContainer = document.getElementById('particles');
-        const particleCount = 30;
+        <div class="lobby-list" id="lobbyList" role="list" aria-label="Available lobbies"></div>
 
-        for (let i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 8 + 's';
-            particle.style.animationDuration = (6 + Math.random() * 4) + 's';
-            particlesContainer.appendChild(particle);
+        <hr style="border:none; border-top:1px solid rgba(255,255,255,0.03); margin:12px 0;">
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div>
+            <label class="small-label">Selected Lobby Name</label>
+            <input type="text" id="lobbyNameInput" placeholder="Rename lobby..." />
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn" id="renameLobbyBtn">Rename</button>
+            <button class="btn danger" id="deleteLobbyBtn">Delete</button>
+          </div>
+
+          <div style="margin-top:6px;">
+            <label class="small-label">Matches (max 6)</label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn" id="addMatchBtn">+ Add Match</button>
+              <button class="btn ghost" id="clearMatchesBtn">Clear Matches</button>
+            </div>
+          </div>
+
+          <div style="margin-top:6px;">
+            <label class="small-label">Quick import/export</label>
+            <div style="display:flex; gap:8px;">
+              <button class="btn" id="exportJsonBtn">Export JSON</button>
+              <button class="btn ghost" id="importJsonBtn">Import JSON</button>
+            </div>
+            <input type="file" id="importFile" accept="application/json" style="display:none" />
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right: Leaderboard & Card -->
+      <main class="main">
+        <section class="board" aria-labelledby="boardLabel">
+          <div class="board-header">
+            <div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <div class="meta" id="boardMeta" aria-live="polite"></div>
+                <div class="meta" id="matchCountMeta"></div>
+              </div>
+            </div>
+
+            <div class="match-controls" role="region" aria-label="Board actions">
+              <button class="btn" id="recalcBtn" title="Recalculate">Recalculate</button>
+              <button class="btn" id="downloadCsvBtn" title="Download CSV">Download CSV</button>
+              <button class="btn ghost" id="downloadSnapshotBtn" title="Download Card Snapshot">Download Card</button>
+              <button class="btn" id="toggleCardEditorBtn" title="Toggle Card Editor">Card Editor</button>
+            </div>
+          </div>
+
+          <!-- Results Table -->
+          <div style="overflow:auto;">
+            <table class="results" aria-describedby="boardMeta">
+              <thead>
+                <tr>
+                  <th class="rank">RANK</th>
+                  <th>TEAM</th>
+                  <th>BOOYAHs</th>
+                  <th>PLACEMENT PTS</th>
+                  <th>KILLS</th>
+                  <th style="text-align:right">TOTAL</th>
+                </tr>
+              </thead>
+              <tbody id="resultsBody" role="list"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Card Generator -->
+        <section class="panel card-panel" id="cardPanel" aria-labelledby="cardLabel">
+          <div class="card-preview" id="cardPreviewWrap" aria-live="polite">
+            <div class="card-inner" id="cardPreview">
+              <div class="card-header">
+                <div>
+                  <div class="card-title" id="cardTitle">CLASH ARENA ESP</div>
+                  <div class="card-sub" id="cardSub">AFTER 0 MATCHES</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-family:'Rajdhani'; font-weight:700; font-size:14px" id="cardTime">--:--</div>
+                  <div style="font-size:12px; color:var(--muted)">Powered by Clash Arena</div>
+                </div>
+              </div>
+
+              <div class="card-leaderboard" id="cardLeaderboard" role="region" aria-label="Card leaderboard preview">
+                <!-- rows injected -->
+              </div>
+            </div>
+
+            <!-- overlay background image element -->
+            <div id="cardBg" aria-hidden="true" style="position:absolute; inset:0; background-size:cover; background-position:center; opacity:0.14; filter: none; pointer-events:none;"></div>
+
+            <!-- overlay color -->
+            <div id="cardOverlay" style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(15,15,15,0.45), rgba(10,10,10,0.65)); pointer-events:none;"></div>
+          </div>
+
+          <div class="card-controls" id="cardControls" style="display:none;">
+            <div>
+              <label class="small-label">Background Image URL</label>
+              <input type="url" id="bgInput" placeholder="Paste image link (optional)" />
+            </div>
+
+            <div>
+              <label class="small-label">Overlay color (alpha allowed)</label>
+              <input type="color" id="overlayColor" value="#0d0d0d" />
+            </div>
+
+            <div>
+              <label class="small-label">Text Color</label>
+              <input type="color" id="textColor" value="#ffffff" />
+            </div>
+
+            <div style="display:flex; gap:8px;">
+              <button class="btn" id="applyCardBtn">Apply</button>
+              <button class="btn ghost" id="resetCardBtn">Reset</button>
+            </div>
+          </div>
+        </section>
+
+        <div class="footer">
+          <div class="muted">All data saved locally (LocalStorage) • Max 4 lobbies, 6 matches each</div>
+          <div class="powered">Powered by Clash Arena</div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    /*
+      Clash Arena ESP Manager
+      Single-file app: index.html
+      - Implements lobby management (max 4)
+      - 12 teams per lobby
+      - Up to 6 matches per lobby
+      - Placement points + kills; booyah used as tiebreaker only
+      - Card generator + html2canvas download
+      - CSV export
+      - All saved to localStorage automatically
+    */
+
+    (function(){
+      "use strict";
+
+      /*** --- Configuration & Utilities --- ***/
+      const STORAGE_KEY = 'clash_arena_esp_v1';
+      const MAX_LOBBIES = 4;
+      const TEAMS_PER_LOBBY = 12;
+      const MAX_MATCHES = 6;
+
+      // placement points mapping
+      const PLACEMENT_POINTS = {
+        1:12, 2:9, 3:8, 4:7, 5:6, 6:5, 7:4, 8:3, 9:2, 10:1, 11:0, 12:0
+      };
+
+      // helper: format time in user's locale in 12-hour; also ensures readable format
+      function formatTime(date = new Date()){
+        const opts = { hour: 'numeric', minute: '2-digit', hour12:true };
+        return new Intl.DateTimeFormat(undefined, opts).format(date);
+      }
+
+      // sanitize team name
+      function sanitizeName(s){
+        return (s||'').toString().trim().slice(0,40) || 'TEAM';
+      }
+
+      // deep clone
+      function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+      // CSV safe
+      function csvEscape(s){
+        if (s === null || s === undefined) return '';
+        s = s.toString();
+        if (s.includes('"') || s.includes(',') || s.includes('\n')) {
+          return '"' + s.replace(/"/g,'""') + '"';
+        }
+        return s;
+      }
+
+      /*** --- Default Data --- ***/
+      function defaultLobby(name='Lobby 1'){
+        const teams = Array.from({length:TEAMS_PER_LOBBY}, (_,i) => ({
+          id: 'T' + (i+1),
+          name: `${name.split(' ')[0] || 'Team'} ${i+1}`,
+        }));
+        return {
+          id: 'L' + Date.now() + Math.floor(Math.random()*999),
+          name: name,
+          teams: teams, // team meta
+          matches: [], // each match: {results: [{teamId, placement, kills, booyah}], createdAt}
+          createdAt: Date.now()
+        };
+      }
+
+      function defaultState(){
+        // create 1 default lobby on first run with 12 teams
+        return {
+          lobbies: [ defaultLobby('Lobby 1') ],
+          activeLobbyId: null
+        };
+      }
+
+      /*** --- State & Persistence --- ***/
+      let state = loadState();
+      if (!state) {
+        state = defaultState();
+        state.activeLobbyId = state.lobbies[0].id;
+        saveState();
+      } else {
+        if (!state.activeLobbyId && state.lobbies.length) state.activeLobbyId = state.lobbies[0].id;
+      }
+
+      // save state
+      function saveState(){
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch(e){
+          console.warn('Failed to save state', e);
+        }
+        renderAll();
+      }
+
+      // load state
+      function loadState(){
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return null;
+          return JSON.parse(raw);
+        } catch(e){
+          console.warn('Corrupt state', e);
+          return null;
+        }
+      }
+
+      // reset storage
+      function resetAll(){
+        if (!confirm('Reset ALL data? This cannot be undone.')) return;
+        localStorage.removeItem(STORAGE_KEY);
+        state = defaultState();
+        state.activeLobbyId = state.lobbies[0].id;
+        saveState();
+      }
+
+      /*** --- DOM Refs --- ***/
+      const lobbyListEl = document.getElementById('lobbyList');
+      const createLobbyBtn = document.getElementById('createLobbyBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const lobbyNameInput = document.getElementById('lobbyNameInput');
+      const renameLobbyBtn = document.getElementById('renameLobbyBtn');
+      const deleteLobbyBtn = document.getElementById('deleteLobbyBtn');
+      const addMatchBtn = document.getElementById('addMatchBtn');
+      const clearMatchesBtn = document.getElementById('clearMatchesBtn');
+      const exportJsonBtn = document.getElementById('exportJsonBtn');
+      const importJsonBtn = document.getElementById('importJsonBtn');
+      const importFile = document.getElementById('importFile');
+
+      const resultsBody = document.getElementById('resultsBody');
+      const boardMeta = document.getElementById('boardMeta');
+      const matchCountMeta = document.getElementById('matchCountMeta');
+      const recalcBtn = document.getElementById('recalcBtn');
+      const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+      const downloadSnapshotBtn = document.getElementById('downloadSnapshotBtn');
+      const toggleCardEditorBtn = document.getElementById('toggleCardEditorBtn');
+
+      const cardPanel = document.getElementById('cardPanel');
+      const cardControls = document.getElementById('cardControls');
+      const bgInput = document.getElementById('bgInput');
+      const overlayColor = document.getElementById('overlayColor');
+      const textColor = document.getElementById('textColor');
+      const applyCardBtn = document.getElementById('applyCardBtn');
+      const resetCardBtn = document.getElementById('resetCardBtn');
+      const cardPreview = document.getElementById('cardPreview');
+      const cardLeaderboard = document.getElementById('cardLeaderboard');
+      const cardSub = document.getElementById('cardSub');
+      const cardTime = document.getElementById('cardTime');
+      const cardBg = document.getElementById('cardBg');
+      const cardOverlay = document.getElementById('cardOverlay');
+      const timeDisplay = document.getElementById('timeDisplay');
+      const downloadSnapshotBtnRef = downloadSnapshotBtn;
+
+      /*** --- Initial UI Setup --- ***/
+      function init(){
+        // ensure activeLobbyId exists
+        if (!state.activeLobbyId && state.lobbies.length) state.activeLobbyId = state.lobbies[0].id;
+
+        // event bindings
+        createLobbyBtn.addEventListener('click', onCreateLobby);
+        resetBtn.addEventListener('click', () => resetAll());
+        renameLobbyBtn.addEventListener('click', onRenameLobby);
+        deleteLobbyBtn.addEventListener('click', onDeleteLobby);
+        addMatchBtn.addEventListener('click', onAddMatch);
+        clearMatchesBtn.addEventListener('click', onClearMatches);
+        exportJsonBtn.addEventListener('click', onExportJson);
+        importJsonBtn.addEventListener('click', () => importFile.click());
+        importFile.addEventListener('change', handleImportFile);
+        recalcBtn.addEventListener('click', recalcAndRender);
+        downloadCsvBtn.addEventListener('click', onDownloadCsv);
+        downloadSnapshotBtn.addEventListener('click', onDownloadSnapshot);
+        toggleCardEditorBtn.addEventListener('click', () => {
+          cardControls.style.display = cardControls.style.display === 'none' ? 'flex' : 'none';
+        });
+        applyCardBtn.addEventListener('click', applyCardSettings);
+        resetCardBtn.addEventListener('click', resetCardSettings);
+
+        // time update
+        setInterval(()=> {
+          const now = new Date();
+          timeDisplay.textContent = `${formatTime(now)} — Manager`;
+          cardTime.textContent = formatTime(now);
+        }, 1000 * 30);
+        timeDisplay.textContent = `${formatTime()} — Manager`;
+        cardTime.textContent = formatTime();
+
+        // default card controls hidden
+        cardControls.style.display = 'none';
+
+        // ensure at least one lobby exists
+        if (state.lobbies.length === 0) {
+          state.lobbies.push(defaultLobby('Lobby 1'));
+          state.activeLobbyId = state.lobbies[0].id;
+          saveState();
         }
 
-        document.getElementById('download-btn').addEventListener('click', function() {
-            const button = this;
-            const originalText = button.textContent;
-            button.textContent = 'CAPTURING...';
-            button.disabled = true;
+        // set default active if missing
+        if (!state.activeLobbyId) state.activeLobbyId = state.lobbies[0].id;
 
-            const posterContainer = document.getElementById('poster-container');
-            
-            html2canvas(posterContainer, {
-                backgroundColor: '#0A0A0A',
-                scale: 2,
-                logging: false,
-                useCORS: true
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'clash-arena-esp-poster.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                button.textContent = originalText;
-                button.disabled = false;
-            }).catch(err => {
-                console.error('Error capturing poster:', err);
-                button.textContent = originalText;
-                button.disabled = false;
-                alert('Error capturing poster. Please try again.');
-            });
+        renderAll();
+      }
+
+      /*** --- Lobby management handlers --- ***/
+      function onCreateLobby(){
+        if (state.lobbies.length >= MAX_LOBBIES){
+          alert(`Max ${MAX_LOBBIES} lobbies allowed.`);
+          return;
+        }
+        // prompt for name
+        const name = prompt('New lobby name', `Lobby ${state.lobbies.length + 1}`);
+        if (!name) return;
+        const lobby = defaultLobby(name.trim());
+        state.lobbies.push(lobby);
+        state.activeLobbyId = lobby.id;
+        saveState();
+      }
+
+      function onRenameLobby(){
+        const lobby = getActiveLobby();
+        if (!lobby) return alert('No lobby selected');
+        const name = lobbyNameInput.value.trim();
+        if (!name) return alert('Please enter a name');
+        lobby.name = name.slice(0,40);
+        // update team default names if they still follow pattern? We will not overwrite team custom names.
+        saveState();
+      }
+
+      function onDeleteLobby(){
+        const lobby = getActiveLobby();
+        if (!lobby) return;
+        if (!confirm(`Delete lobby "${lobby.name}"? This action cannot be undone.`)) return;
+        state.lobbies = state.lobbies.filter(l => l.id !== lobby.id);
+        if (state.lobbies.length > 0) state.activeLobbyId = state.lobbies[0].id;
+        else {
+          const l = defaultLobby('Lobby 1');
+          state.lobbies = [l];
+          state.activeLobbyId = l.id;
+        }
+        saveState();
+      }
+
+      function onAddMatch(){
+        const lobby = getActiveLobby();
+        if (!lobby) return;
+        if (lobby.matches.length >= MAX_MATCHES){
+          alert(`Max ${MAX_MATCHES} matches allowed per lobby.`);
+          return;
+        }
+
+        // create a match snapshot based on current team order / default values
+        // default placement blank (0) and kills 0 and booyah false
+        const match = {
+          id: 'M' + Date.now() + Math.floor(Math.random()*999),
+          createdAt: Date.now(),
+          results: lobby.teams.map(t => ({
+            teamId: t.id,
+            placement: 0,
+            kills: 0,
+            booyah: false
+          }))
+        };
+        lobby.matches.push(match);
+        saveState();
+      }
+
+      function onClearMatches(){
+        const lobby = getActiveLobby();
+        if (!lobby) return;
+        if (!confirm('Clear all matches for this lobby?')) return;
+        lobby.matches = [];
+        saveState();
+      }
+
+      function onExportJson(){
+        const data = JSON.stringify(state, null, 2);
+        const blob = new Blob([data], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'clash_arena_export.json';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function handleImportFile(e){
+        const f = e.target.files && e.target.files[0];
+        importFile.value = ''; // clear
+        if (!f) return;
+        const reader = new FileReader();
+        reader.onload = function(ev){
+          try {
+            const parsed = JSON.parse(ev.target.result);
+            if (!parsed || !Array.isArray(parsed.lobbies)) throw new Error('Invalid file');
+            // simple validation: ensure max lobbies not exceeded
+            if (parsed.lobbies.length > MAX_LOBBIES) {
+              if (!confirm(`Imported file contains ${parsed.lobbies.length} lobbies. Only ${MAX_LOBBIES} allowed. Import will keep first ${MAX_LOBBIES}. Continue?`)) return;
+              parsed.lobbies = parsed.lobbies.slice(0, MAX_LOBBIES);
+            }
+            state = parsed;
+            if (!state.activeLobbyId && state.lobbies[0]) state.activeLobbyId = state.lobbies[0].id;
+            saveState();
+            alert('Import successful.');
+          } catch(err){
+            console.error(err);
+            alert('Invalid JSON file.');
+          }
+        };
+        reader.readAsText(f);
+      }
+
+      /*** --- Helpers to get active lobby & derived stats --- ***/
+      function getActiveLobby(){
+        return state.lobbies.find(l => l.id === state.activeLobbyId);
+      }
+
+      // Find team meta by id
+      function teamMeta(lobby, teamId){
+        return (lobby.teams || []).find(t => t.id === teamId);
+      }
+
+      // Recalculate leaderboard for a lobby: returns array sorted and includes aggregates
+      function computeLeaderboard(lobby){
+        // accumulate per-team totals
+        const totals = {}; // teamId -> {teamId, name, booyahs, placementPts, kills, totalPoints, placementSum}
+        // initialize
+        lobby.teams.forEach(t => {
+          totals[t.id] = {
+            teamId: t.id,
+            name: sanitizeName(t.name),
+            booyahs: 0,
+            placementPts: 0,
+            kills: 0,
+            totalPoints: 0,
+            placementSum: 0 // lower is better if we used avg placement, but we use placementPts for tiebreaker
+          };
         });
-    </script>
+
+        lobby.matches.forEach(match => {
+          match.results.forEach(r => {
+            const rec = totals[r.teamId];
+            if (!rec) return;
+            const placement = Number(r.placement) || 0;
+            const kills = Number(r.kills) || 0;
+            const booyah = !!r.booyah;
+
+            const placementPoints = PLACEMENT_POINTS[placement] || 0;
+            rec.booyahs += booyah ? 1 : 0;
+            rec.placementPts += placementPoints;
+            rec.placementSum += placement || 0;
+            rec.kills += kills;
+            rec.totalPoints += placementPoints + kills;
+          });
+        });
+
+        // convert to array and sort by rules:
+        // Total Points (desc) -> Booyahs (desc) -> Placement Points (desc) -> Kills (desc)
+        const list = Object.values(totals);
+        list.sort((a,b) => {
+          if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+          if (b.booyahs !== a.booyahs) return b.booyahs - a.booyahs;
+          if (b.placementPts !== a.placementPts) return b.placementPts - a.placementPts;
+          if (b.kills !== a.kills) return b.kills - a.kills;
+          // fallback: alphabetical
+          return a.name.localeCompare(b.name);
+        });
+
+        // attach rank
+        list.forEach((x,i) => x.rank = i+1);
+        return list;
+      }
+
+      /*** --- Rendering --- ***/
+      function renderAll(){
+        renderLobbyList();
+        renderLobbyPanel();
+        recalcAndRender();
+      }
+
+      function renderLobbyList(){
+        lobbyListEl.innerHTML = '';
+        state.lobbies.forEach(lobby => {
+          const item = document.createElement('div');
+          item.className = 'lobby-item' + (lobby.id === state.activeLobbyId ? ' active' : '');
+          item.setAttribute('role','listitem');
+          item.tabIndex = 0;
+
+          item.onclick = () => {
+            state.activeLobbyId = lobby.id;
+            saveState();
+            renderAll();
+          };
+
+          item.onkeydown = (e) => { if (e.key === 'Enter') { item.click(); } };
+
+          const title = document.createElement('div');
+          title.className = 'lobby-title';
+          title.innerHTML = `<strong style="font-family:'Rajdhani';">${escapeHtml(lobby.name)}</strong>
+                             <div style="font-size:12px;color:var(--muted);margin-left:6px">· ${lobby.teams.length} teams</div>`;
+
+          const actions = document.createElement('div');
+          actions.className = 'lobby-actions';
+          const btnView = document.createElement('button');
+          btnView.className = 'small';
+          btnView.textContent = 'Open';
+          btnView.onclick = (ev) => { ev.stopPropagation(); state.activeLobbyId = lobby.id; saveState(); };
+
+          const btnDup = document.createElement('button');
+          btnDup.className = 'small';
+          btnDup.textContent = 'Duplicate';
+          btnDup.onclick = (ev) => { ev.stopPropagation(); duplicateLobby(lobby.id); };
+
+          actions.appendChild(btnView);
+          actions.appendChild(btnDup);
+
+          item.appendChild(title);
+          item.appendChild(actions);
+          lobbyListEl.appendChild(item);
+        });
+      }
+
+      function escapeHtml(s){
+        return (s || '').toString().replace(/[&<>"']/g, m => ({
+          '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+        })[m]);
+      }
+
+      function duplicateLobby(lobbyId){
+        const source = state.lobbies.find(l => l.id === lobbyId);
+        if (!source) return;
+        if (state.lobbies.length >= MAX_LOBBIES) return alert('Max lobbies reached.');
+        const copy = clone(source);
+        copy.id = 'L' + Date.now() + Math.floor(Math.random()*999);
+        copy.name = copy.name + ' Copy';
+        // ensure team IDs unique
+        copy.teams = copy.teams.map((t,i) => ({ id: copy.id + '_T' + (i+1), name: t.name }));
+        // regenerate match results teamId to match new ids if matches exist
+        copy.matches = (copy.matches || []).map(m => {
+          const mapping = {};
+          source.teams.forEach((t,i)=> mapping[t.id] = copy.teams[i].id);
+          return {
+            id: 'M' + Date.now() + Math.floor(Math.random()*999),
+            createdAt: m.createdAt,
+            results: m.results.map(r => ({ teamId: mapping[r.teamId] || r.teamId, placement: r.placement, kills:r.kills, booyah: r.booyah }))
+          };
+        });
+
+        state.lobbies.push(copy);
+        state.activeLobbyId = copy.id;
+        saveState();
+      }
+
+      function renderLobbyPanel(){
+        const lobby = getActiveLobby();
+        if (!lobby) return;
+        lobbyNameInput.value = lobby.name || '';
+      }
+
+      function recalcAndRender(){
+        const lobby = getActiveLobby();
+        if (!lobby) return;
+
+        // compute leaderboard array
+        const leaderboard = computeLeaderboard(lobby);
+
+        // update header meta
+        const matches = lobby.matches.length;
+        boardMeta.textContent = `${lobby.name} • ${lobby.teams.length} teams`;
+        matchCountMeta.textContent = `Matches: ${matches} / ${MAX_MATCHES}`;
+
+        // render results body
+        resultsBody.innerHTML = '';
+        leaderboard.forEach(row => {
+          const tr = document.createElement('tr');
+
+          // rank with top styling
+          const rankTd = document.createElement('td');
+          rankTd.className = 'rank';
+          const rankBadge = document.createElement('div');
+          rankBadge.textContent = row.rank;
+          rankBadge.className = 'badge ' + (row.rank===1 ? 'top-1' : row.rank===2 ? 'top-2' : row.rank===3 ? 'top-3' : '');
+          rankTd.appendChild(rankBadge);
+
+          // team name editable
+          const nameTd = document.createElement('td');
+          nameTd.className = 'team-name';
+          const teamInput = document.createElement('input');
+          teamInput.value = row.name;
+          teamInput.setAttribute('aria-label','Team name');
+          teamInput.addEventListener('change', (e) => {
+            // find team in lobby and update name
+            const t = lobby.teams.find(tt => tt.id === row.teamId);
+            if (t) {
+              t.name = e.target.value.trim().slice(0,40) || t.name;
+              saveState();
+            }
+          });
+          nameTd.appendChild(teamInput);
+
+          // booyah count (cumulative)
+          const booyTd = document.createElement('td');
+          booyTd.className = 'muted';
+          booyTd.style.width = '84px';
+          booyTd.textContent = row.booyahs;
+
+          // placement points
+          const placeTd = document.createElement('td');
+          placeTd.className = 'muted';
+          placeTd.textContent = row.placementPts;
+
+          // kills
+          const killsTd = document.createElement('td');
+          killsTd.className = 'muted';
+          killsTd.textContent = row.kills;
+
+          // total
+          const totalTd = document.createElement('td');
+          totalTd.className = 'points';
+          totalTd.textContent = row.totalPoints;
+
+          tr.appendChild(rankTd);
+          tr.appendChild(nameTd);
+          tr.appendChild(booyTd);
+          tr.appendChild(placeTd);
+          tr.appendChild(killsTd);
+          tr.appendChild(totalTd);
+
+          resultsBody.appendChild(tr);
+        });
+
+        // Also show per-match editor below table (in the same board) — we'll create a compact editor for each match
+        // Remove existing match-editor if any
+        let existingEditor = document.getElementById('matchEditorWrap');
+        if (existingEditor) existingEditor.remove();
+
+        const matchWrap = document.createElement('div');
+        matchWrap.id = 'matchEditorWrap';
+        matchWrap.style.marginTop = '12px';
+        matchWrap.style.paddingTop = '12px';
+        matchWrap.style.borderTop = '1px solid rgba(255,255,255,0.02)';
+
+        // For each match show collapsible block
+        lobby.matches.forEach((match, mIndex) => {
+          const matchBox = document.createElement('div');
+          matchBox.style.marginBottom = '10px';
+          matchBox.style.padding = '10px';
+          matchBox.style.borderRadius = '8px';
+          matchBox.style.background = 'rgba(255,255,255,0.01)';
+
+          const header = document.createElement('div');
+          header.style.display = 'flex';
+          header.style.justifyContent = 'space-between';
+          header.style.alignItems = 'center';
+          header.style.marginBottom = '8px';
+          header.innerHTML = `<div style="font-weight:700">Match ${mIndex+1}</div>
+                              <div style="font-size:12px;color:var(--muted)">${new Date(match.createdAt).toLocaleString()}</div>`;
+
+          const grid = document.createElement('div');
+          grid.style.display = 'grid';
+          grid.style.gridTemplateColumns = '1fr';
+          grid.style.gap = '6px';
+
+          // for each result row provide inputs for placement, kills, booyah
+          match.results.forEach(res => {
+            const team = teamMeta(lobby, res.teamId);
+            const row = document.createElement('div');
+            row.style.display = 'flex';
+            row.style.gap = '8px';
+            row.style.alignItems = 'center';
+
+            const teamLabel = document.createElement('div');
+            teamLabel.style.flex = '1';
+            teamLabel.textContent = (team && team.name) ? team.name : res.teamId;
+            teamLabel.style.paddingLeft = '6px';
+            teamLabel.style.fontFamily = 'Rajdhani';
+
+            const placementInput = document.createElement('input');
+            placementInput.type = 'number';
+            placementInput.min = 0;
+            placementInput.max = TEAMS_PER_LOBBY;
+            placementInput.className = 'small-input';
+            placementInput.value = res.placement || 0;
+            placementInput.title = 'Placement (1..12)';
+
+            const killsInput = document.createElement('input');
+            killsInput.type = 'number';
+            killsInput.min = 0;
+            killsInput.max = 999;
+            killsInput.className = 'small-input';
+            killsInput.value = res.kills || 0;
+            killsInput.title = 'Kills (numeric)';
+
+            const booyCheckbox = document.createElement('input');
+            booyCheckbox.type = 'checkbox';
+            booyCheckbox.checked = !!res.booyah;
+            booyCheckbox.title = 'Booyah (tiebreaker only)';
+
+            // change handlers
+            placementInput.addEventListener('change', (e) => {
+              let v = Math.round(Number(e.target.value) || 0);
+              if (v < 0) v = 0;
+              if (v > TEAMS_PER_LOBBY) v = TEAMS_PER_LOBBY;
+              e.target.value = v;
+              res.placement = v;
+              saveState();
+            });
+
+            killsInput.addEventListener('change', (e) => {
+              let v = Math.round(Number(e.target.value) || 0);
+              if (v < 0) v = 0;
+              e.target.value = v;
+              res.kills = v;
+              saveState();
+            });
+
+            booyCheckbox.addEventListener('change', (e) => {
+              res.booyah = !!e.target.checked;
+              saveState();
+            });
+
+            row.appendChild(teamLabel);
+            row.appendChild(placementInput);
+            row.appendChild(killsInput);
+
+            const bwrap = document.createElement('div');
+            bwrap.className = 'booyah';
+            bwrap.appendChild(booyCheckbox);
+            bwrap.appendChild(document.createElement('span')).textContent = 'Booyah';
+            row.appendChild(bwrap);
+
+            grid.appendChild(row);
+          });
+
+          const matchActions = document.createElement('div');
+          matchActions.style.display = 'flex';
+          matchActions.style.gap = '8px';
+          matchActions.style.marginTop = '8px';
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'btn ghost';
+          deleteBtn.textContent = 'Delete Match';
+          deleteBtn.onclick = () => {
+            if (!confirm('Delete this match?')) return;
+            lobby.matches.splice(mIndex,1);
+            saveState();
+          };
+
+          const duplicateBtn = document.createElement('button');
+          duplicateBtn.className = 'btn';
+          duplicateBtn.textContent = 'Duplicate';
+          duplicateBtn.onclick = () => {
+            const cp = clone(match);
+            cp.id = 'M' + Date.now() + Math.floor(Math.random()*999);
+            cp.createdAt = Date.now();
+            lobby.matches.splice(mIndex+1,0,cp);
+            saveState();
+          };
+
+          matchActions.appendChild(duplicateBtn);
+          matchActions.appendChild(deleteBtn);
+
+          matchBox.appendChild(header);
+          matchBox.appendChild(grid);
+          matchBox.appendChild(matchActions);
+          matchWrap.appendChild(matchBox);
+        });
+
+        // show button to auto-populate default placements sequentially if empty
+        const autoBtn = document.createElement('div');
+        autoBtn.style.display='flex';
+        autoBtn.style.justifyContent='flex-end';
+        autoBtn.style.marginTop='8px';
+        const btn = document.createElement('button');
+        btn.className='btn ghost';
+        btn.textContent = 'Auto-fill placements for matches (1..12)';
+        btn.onclick = () => {
+          if (!confirm('Auto-fill placement 1..12 for each match where placement is 0?')) return;
+          lobby.matches.forEach(m => {
+            // if any placement is zero, fill sequentially by current team order
+            const hasZero = m.results.some(r => !r.placement);
+            if (hasZero){
+              m.results.forEach((r,i) => r.placement = i+1);
+            }
+          });
+          saveState();
+        };
+        autoBtn.appendChild(btn);
+
+        // append matchWrap
+        resultsBody.parentElement.appendChild(matchWrap);
+        resultsBody.parentElement.appendChild(autoBtn);
+
+        // render card preview
+        renderCardPreview(lobby, leaderboard);
+      }
+
+      /*** --- Card Generator & Export --- ***/
+      function renderCardPreview(lobby, leaderboard){
+        const matches = lobby.matches.length;
+        cardSub.textContent = `AFTER ${matches} MATCH${matches === 1 ? '' : 'ES'}`;
+        cardTime.textContent = formatTime(new Date());
+
+        // Build rows — show all teams sorted by rank
+        cardLeaderboard.innerHTML = '';
+        leaderboard.forEach(r => {
+          const row = document.createElement('div');
+          row.className = 'card-row';
+          if (r.rank === 1) row.style.border = '1px solid rgba(255,215,0,0.06)';
+          if (r.rank === 2) row.style.border = '1px solid rgba(192,192,192,0.03)';
+          if (r.rank === 3) row.style.border = '1px solid rgba(216,138,58,0.03)';
+
+          const left = document.createElement('div');
+          left.className = 'c-left';
+          left.style.display = 'flex';
+          left.style.alignItems = 'center';
+          left.style.gap = '10px';
+
+          const rank = document.createElement('div');
+          rank.className = 'card-rank';
+          rank.textContent = r.rank;
+
+          const name = document.createElement('div');
+          name.className = 'card-team';
+          name.textContent = r.name;
+
+          left.appendChild(rank);
+          left.appendChild(name);
+
+          const right = document.createElement('div');
+          right.style.display = 'flex';
+          right.style.gap = '12px';
+          right.style.alignItems = 'center';
+          const pts = document.createElement('div');
+          pts.className = 'card-points';
+          pts.textContent = r.totalPoints;
+
+          const booy = document.createElement('div');
+          booy.style.fontSize = '12px';
+          booy.style.color = 'var(--muted)';
+          booy.textContent = `B:${r.booyahs}`;
+
+          right.appendChild(booy);
+          right.appendChild(pts);
+
+          row.appendChild(left);
+          row.appendChild(right);
+
+          cardLeaderboard.appendChild(row);
+        });
+      }
+
+      function applyCardSettings(){
+        const bg = bgInput.value.trim();
+        const overlay = overlayColor.value || '#0d0d0d';
+        const text = textColor.value || '#ffffff';
+
+        if (bg) {
+          cardBg.style.backgroundImage = `url("${bg}")`;
+          cardBg.style.opacity = '0.18';
+        } else {
+          cardBg.style.backgroundImage = 'none';
+          cardBg.style.opacity = '0';
+        }
+        cardOverlay.style.background = `linear-gradient(180deg, ${hexToRgba(overlay,0.45)}, ${hexToRgba(overlay,0.65)})`;
+        cardPreview.style.color = text;
+        saveCardSettingsToLocal(bg, overlay, text);
+      }
+
+      function resetCardSettings(){
+        bgInput.value = '';
+        overlayColor.value = '#0d0d0d';
+        textColor.value = '#ffffff';
+        applyCardSettings();
+        localStorage.removeItem('clash_arena_card_settings');
+      }
+
+      function saveCardSettingsToLocal(bg, overlay, text){
+        const obj = {bg, overlay, text};
+        localStorage.setItem('clash_arena_card_settings', JSON.stringify(obj));
+      }
+
+      function loadCardSettingsFromLocal(){
+        try {
+          const raw = localStorage.getItem('clash_arena_card_settings');
+          if (!raw) return;
+          const s = JSON.parse(raw);
+          if (s.bg) bgInput.value = s.bg;
+          if (s.overlay) overlayColor.value = s.overlay;
+          if (s.text) textColor.value = s.text;
+          applyCardSettings();
+        } catch(e) { /* ignore */ }
+      }
+
+      function hexToRgba(hex, alpha=1){
+        // supports #rrggbb
+        if (!hex) return `rgba(13,13,13,${alpha})`;
+        const h = hex.replace('#','');
+        const bigint = parseInt(h,16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return `rgba(${r},${g},${b},${alpha})`;
+      }
+
+      // snapshot download using html2canvas (works offline so long as CDN loaded)
+      async function onDownloadSnapshot(){
+        // toggle card controls off to avoid capturing them
+        const previousDisplay = cardControls.style.display;
+        cardControls.style.display = 'none';
+
+        // ensure high resolution canvas by increasing scale
+        const node = document.getElementById('cardPreviewWrap');
+
+        // before capture, temporarily remove pointer-events and ensure fonts loaded
+        node.style.transform = 'scale(1)';
+
+        try {
+          // html2canvas options - set useCORS true to support external images (if allowed by CORS)
+          const canvas = await html2canvas(node, { scale: 2, useCORS: true, backgroundColor: null, allowTaint: true });
+          const dataUrl = canvas.toDataURL('image/png');
+          const a = document.createElement('a');
+          a.href = dataUrl;
+          a.download = `${(getActiveLobby()?.name||'clash_arena')}_card.png`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        } catch (err) {
+          console.error('Snapshot failed',err);
+          alert('Snapshot failed. Try ensuring the background image allows CORS or try a different image.');
+        } finally {
+          cardControls.style.display = previousDisplay;
+        }
+      }
+
+      // CSV export
+      function onDownloadCsv(){
+        const lobby = getActiveLobby();
+        if (!lobby) return;
+        const leaderboard = computeLeaderboard(lobby);
+
+        // header lines show lobby and timestamp
+        const rows = [];
+        rows.push(['Clash Arena ESP Manager']);
+        rows.push([`Lobby: ${lobby.name}`, `Matches: ${lobby.matches.length}`]);
+        rows.push([`Generated: ${new Date().toLocaleString()}`]);
+        rows.push([]);
+        // columns
+        const cols = ['Rank','Team','TotalPoints','Booyahs','PlacementPoints','Kills'];
+        rows.push(cols);
+        leaderboard.forEach(r => {
+          rows.push([r.rank, r.name, r.totalPoints, r.booyahs, r.placementPts, r.kills]);
+        });
+
+        // include per-match details beneath (each match rows)
+        if (lobby.matches.length){
+          rows.push([]);
+          rows.push(['Per-match details']);
+          lobby.matches.forEach((m,i) => {
+            rows.push([`Match ${i+1}`]);
+            rows.push(['Team','Placement','PlacementPoints','Kills','Booyah']);
+            m.results.forEach(rr => {
+              const tmeta = teamMeta(lobby, rr.teamId);
+              const placement = Number(rr.placement) || 0;
+              const placementPts = PLACEMENT_POINTS[placement] || 0;
+              rows.push([tmeta ? tmeta.name : rr.teamId, placement, placementPts, rr.kills || 0, rr.booyah ? '1':'0']);
+            });
+            rows.push([]);
+          });
+        }
+
+        // convert to CSV text
+        const csv = rows.map(r => r.map(csvEscape).join(',')).join('\n');
+        const blob = new Blob([csv], {type:'text/csv'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${(lobby.name||'lobby')}_results.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      /*** --- Utility: Download snapshot handler (wrapper) --- ***/
+      function onDownloadSnapshot(){
+        // use html2canvas to capture the preview area
+        if (typeof html2canvas === 'undefined') {
+          alert('html2canvas is required but not loaded.');
+          return;
+        }
+        // Hide controls for a clean capture
+        const prev = cardControls.style.display;
+        cardControls.style.display = 'none';
+
+        const node = document.getElementById('cardPreviewWrap');
+        // Slightly temporarily increase scale for high-res
+        html2canvas(node, { scale: 2, useCORS: true, backgroundColor: null, allowTaint: true }).then(canvas => {
+          canvas.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${(getActiveLobby()?.name||'lobby')}_card.png`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+          });
+        }).catch(err => {
+          console.error(err);
+          alert('Failed to capture card. Try a different background or disable CORS images.');
+        }).finally(() => {
+          cardControls.style.display = prev;
+        });
+      }
+
+      /*** --- Utilities & small features --- ***/
+      // Ensure lobby teams are present and have stable IDs
+      function ensureLobbyTeams(lobby){
+        if (!lobby.teams || !Array.isArray(lobby.teams) || lobby.teams.length !== TEAMS_PER_LOBBY){
+          lobby.teams = Array.from({length:TEAMS_PER_LOBBY},(_,i)=>({id: lobby.id + '_T' + (i+1), name: `Team ${i+1}` }));
+        }
+      }
+
+      // On load, ensure all lobbies have required fields
+      function normalizeState(){
+        if (!state.lobbies || !Array.isArray(state.lobbies) || state.lobbies.length === 0){
+          state.lobbies = [ defaultLobby('Lobby 1') ];
+        }
+        state.lobbies.forEach(lobby => {
+          if (!lobby.id) lobby.id = 'L' + Date.now() + Math.floor(Math.random()*999);
+          ensureLobbyTeams(lobby);
+          lobby.matches = lobby.matches || [];
+          // cap matches to MAX_MATCHES
+          if (lobby.matches.length > MAX_MATCHES) lobby.matches = lobby.matches.slice(0,MAX_MATCHES);
+          // sanitize team names length
+          lobby.teams.forEach(t => { t.name = (t.name || '').toString().slice(0,40) || 'TEAM'; });
+        });
+        if (!state.activeLobbyId && state.lobbies[0]) state.activeLobbyId = state.lobbies[0].id;
+      }
+
+      // Export/import json handled above
+
+      // initial normalization and settings load
+      normalizeState();
+      loadCardSettingsFromLocal();
+      init();
+
+      // Ensure we re-render on any storage changes (for multi-tab)
+      window.addEventListener('storage', (e) => {
+        if (e.key === STORAGE_KEY) {
+          const incoming = loadState();
+          if (incoming) {
+            state = incoming;
+            normalizeState();
+            renderAll();
+          }
+        }
+      });
+
+      // Expose some functions for debugging (optional)
+      window.CA = {
+        getState: () => clone(state),
+        save: saveState,
+        reset: resetAll
+      };
+
+    })();
+  </script>
+
 </body>
 </html>
